@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/eigenverft/Eigenverft.NetLib.SerilogThemes/main/src/prj/Eigenverft.NetLib.SerilogThemes/AddPackageFiles/eigenverft-logo-v7-harbor-square_128_128.png" width="112" height="112" alt="Eigenverft logo">
-</p>
-
 # 🎨 Eigenverft.NetLib.SerilogThemes
 
 [![NuGet Version](https://img.shields.io/nuget/v/Eigenverft.NetLib.SerilogThemes?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![NuGet Downloads](https://img.shields.io/nuget/dt/Eigenverft.NetLib.SerilogThemes?label=Downloads&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![Build Status](https://img.shields.io/github/actions/workflow/status/eigenverft/Eigenverft.NetLib.SerilogThemes/cicd.yml?branch=main&label=build)](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/actions/workflows/cicd.yml) [![Targets](https://img.shields.io/badge/targets-net462%20%7C%20.NET%206%20%7C%208%20%7C%2010-512BD4?logo=dotnet&logoColor=white)](#-target-frameworks) [![License](https://img.shields.io/github/license/eigenverft/Eigenverft.NetLib.SerilogThemes?logo=mit)](LICENSE)
