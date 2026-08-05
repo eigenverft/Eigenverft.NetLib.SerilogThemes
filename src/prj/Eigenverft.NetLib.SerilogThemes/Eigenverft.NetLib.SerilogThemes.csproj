@@ -11,20 +11,28 @@
     <DebugType>embedded</DebugType>
     <IsPackable>true</IsPackable>
     <IsPublishable>false</IsPublishable>
+    <VersionBuild>0</VersionBuild>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <VersionRevision>0</VersionRevision>
+    <AssemblyVersion>$(VersionBuild).$(VersionMajor).$(VersionMinor).$(VersionRevision)</AssemblyVersion>
+    <Version>$(VersionBuild).$(VersionMajor).$(VersionMinor).$(VersionRevision)$(VersionSuffix)</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>$(Branding)</Authors>
     <RepositoryUrl>https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Curated ANSI console themes for Serilog, including the Eigenverft dark terminal palette.</Description>
     <PackageTags>dotnet;serilog;console;ansi;theme;logging;eigenverft</PackageTags>
-    <Copyright>Copyright (c) 2025 Carsten Riedel; Copyright (c) 2026 $(Branding)</Copyright>
+    <Copyright>Copyright (c) 2025-2026 $(Branding)</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="../../../README.md" Pack="true" PackagePath="/" Link="README.md" />
+    <None Include="../../../LICENSE" Pack="true" PackagePath="/" Link="LICENSE" />
   </ItemGroup>
 
   <ItemGroup>
