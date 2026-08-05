@@ -61,21 +61,6 @@ $GITHUB_TOKEN = Get-ConfigValue -Check $GITHUB_TOKEN -FilePath (Join-Path $PSScr
 $SECRET_NUGET_APIKEY = Get-ConfigValue -Check $SECRET_NUGET_APIKEY -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_NUGET_APIKEY'
 $SECRET_INTTESTNUGET_APIKEY = Get-ConfigValue -Check $SECRET_INTTESTNUGET_APIKEY -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_INTTESTNUGET_APIKEY'
 $SECRET_POWERSHELLGALLERY_APIKEY = Get-ConfigValue -Check $SECRET_POWERSHELLGALLERY_APIKEY -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_POWERSHELLGALLERY_APIKEY'
-
-# Package publishing API keys are printable ASCII tokens. Remove only transport artifacts
-# that can be introduced when a repository secret is populated through redirected input.
-$SECRET_NUGET_APIKEY = (([string]$SECRET_NUGET_APIKEY) -replace '[\u0000\uFEFF\r\n]', '').Trim()
-$SECRET_INTTESTNUGET_APIKEY = (([string]$SECRET_INTTESTNUGET_APIKEY) -replace '[\u0000\uFEFF\r\n]', '').Trim()
-$SECRET_POWERSHELLGALLERY_APIKEY = (([string]$SECRET_POWERSHELLGALLERY_APIKEY) -replace '[\u0000\uFEFF\r\n]', '').Trim()
-
-foreach ($ApiKeyValue in @($SECRET_NUGET_APIKEY, $SECRET_INTTESTNUGET_APIKEY, $SECRET_POWERSHELLGALLERY_APIKEY))
-{
-    if ($ApiKeyValue -match '[^\x21-\x7E]')
-    {
-        throw 'A package publishing API key contains non-printable or non-ASCII characters.'
-    }
-}
-
 Test-VariableValue -Variable { $GITHUB_TOKEN } -ExitIfNullOrEmpty -HideValue
 Test-VariableValue -Variable { $SECRET_NUGET_APIKEY } -ExitIfNullOrEmpty -HideValue
 Test-VariableValue -Variable { $SECRET_INTTESTNUGET_APIKEY } -ExitIfNullOrEmpty -HideValue
