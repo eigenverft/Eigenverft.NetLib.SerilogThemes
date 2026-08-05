@@ -4,7 +4,7 @@
 
 # 🎨 Eigenverft.NetLib.SerilogThemes
 
-[![NuGet Version](https://img.shields.io/nuget/v/Eigenverft.NetLib.SerilogThemes?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![NuGet Downloads](https://img.shields.io/nuget/dt/Eigenverft.NetLib.SerilogThemes?label=Downloads&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![Build Status](https://img.shields.io/github/actions/workflow/status/eigenverft/Eigenverft.NetLib.SerilogThemes/cicd.yml?branch=main&label=build)](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/actions/workflows/cicd.yml) [![.NET](https://img.shields.io/badge/.NET-8%20%7C%2010-512BD4?logo=dotnet&logoColor=white)](#-target-frameworks) [![License](https://img.shields.io/github/license/eigenverft/Eigenverft.NetLib.SerilogThemes?logo=mit)](LICENSE)
+[![NuGet Version](https://img.shields.io/nuget/v/Eigenverft.NetLib.SerilogThemes?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![NuGet Downloads](https://img.shields.io/nuget/dt/Eigenverft.NetLib.SerilogThemes?label=Downloads&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![Build Status](https://img.shields.io/github/actions/workflow/status/eigenverft/Eigenverft.NetLib.SerilogThemes/cicd.yml?branch=main&label=build)](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/actions/workflows/cicd.yml) [![Targets](https://img.shields.io/badge/targets-net462%20%7C%20.NET%206%20%7C%208%20%7C%2010-512BD4?logo=dotnet&logoColor=white)](#-target-frameworks) [![License](https://img.shields.io/github/license/eigenverft/Eigenverft.NetLib.SerilogThemes?logo=mit)](LICENSE)
 
 Curated ANSI console themes for [`Serilog.Sinks.Console`](https://github.com/serilog/serilog-sinks-console), including the Eigenverft dark terminal palette.
 
@@ -22,7 +22,7 @@ Small package, focused API: pick a theme and pass it directly to `WriteTo.Consol
 | Package | `Eigenverft.NetLib.SerilogThemes` |
 | API | `AnsiConsoleThemes.<ThemeName>` |
 | Themes | 7 curated ANSI palettes |
-| Target frameworks | .NET 8 and .NET 10 |
+| Target frameworks | .NET Framework 4.6.2 and .NET 6, 8, and 10 |
 | Console sink | `Serilog.Sinks.Console` |
 | License | MIT |
 
@@ -91,14 +91,39 @@ ANSI rendering depends on the terminal and its color capabilities.
 
 `EigenverftDark` is designed for a near-black terminal background comparable to the Eigenverft **Tarink** color (`rgb(9, 14, 15)`). It normally leaves the terminal background untouched; only fatal events use an explicit background color.
 
+## 🧪 Theme preview application
+
+The repository includes the original-style console preview project with hosting and Microsoft logging integration:
+
+```shell
+dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj
+```
+
+`EigenverftDark` is the default. Select another theme by name:
+
+```shell
+dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj -- --theme Aurora
+dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj -- --theme RetroGreen
+```
+
+List every available theme:
+
+```shell
+dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj -- --list
+```
+
+The preview writes every Serilog level, structured scalar and object values, an exception, and a message routed through `Microsoft.Extensions.Logging`.
+
 ## 🎯 Target frameworks
 
-The package ships assets for:
+The package ships dedicated assets for:
 
+- `net462`
+- `net6.0`
 - `net8.0`
 - `net10.0`
 
-.NET 9 consumers use the compatible `net8.0` asset.
+This preserves the original .NET Framework compatibility while covering the .NET LTS lines. Compatible odd-numbered .NET consumers can use the preceding LTS asset, for example .NET 7 uses `net6.0` and .NET 9 uses `net8.0`.
 
 ## 🧪 Build and test
 

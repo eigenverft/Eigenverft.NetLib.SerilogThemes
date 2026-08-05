@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/prj/">
     <Project Path="prj/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogThemes.csproj" />
+    <Project Path="prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj" />
     <Project Path="prj/Eigenverft.NetLib.SerilogThemes.Tests/Eigenverft.NetLib.SerilogThemes.Tests.csproj" />
   </Folder>
 </Solution>
