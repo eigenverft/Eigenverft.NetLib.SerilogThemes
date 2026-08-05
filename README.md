@@ -1,18 +1,47 @@
-# Eigenverft.NetLib.SerilogThemes
+<p align="center">
+  <img src="https://raw.githubusercontent.com/eigenverft/Eigenverft.NetLib.SerilogThemes/main/src/prj/Eigenverft.NetLib.SerilogThemes/AddPackageFiles/eigenverft-logo-v7-harbor-square_128_128.png" width="112" height="112" alt="Eigenverft logo">
+</p>
 
-Curated ANSI console themes for [`Serilog.Sinks.Console`](https://github.com/serilog/serilog-sinks-console), including an Eigenverft-specific dark terminal palette.
+# 🎨 Eigenverft.NetLib.SerilogThemes
 
-## Installation
+[![NuGet Version](https://img.shields.io/nuget/v/Eigenverft.NetLib.SerilogThemes?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![NuGet Downloads](https://img.shields.io/nuget/dt/Eigenverft.NetLib.SerilogThemes?label=Downloads&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![Build Status](https://img.shields.io/github/actions/workflow/status/eigenverft/Eigenverft.NetLib.SerilogThemes/cicd.yml?branch=main&label=build)](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/actions/workflows/cicd.yml) [![.NET](https://img.shields.io/badge/.NET-8%20%7C%2010-512BD4?logo=dotnet&logoColor=white)](#-target-frameworks) [![License](https://img.shields.io/github/license/eigenverft/Eigenverft.NetLib.SerilogThemes?logo=mit)](LICENSE)
 
-```powershell
+Curated ANSI console themes for [`Serilog.Sinks.Console`](https://github.com/serilog/serilog-sinks-console), including the Eigenverft dark terminal palette.
+
+Small package, focused API: pick a theme and pass it directly to `WriteTo.Console(...)`.
+
+> [!IMPORTANT]
+> This package is currently **pre-1.0**. Theme names and palettes may still evolve between releases.
+
+---
+
+## ✨ At a glance
+
+| | |
+| --- | --- |
+| Package | `Eigenverft.NetLib.SerilogThemes` |
+| API | `AnsiConsoleThemes.<ThemeName>` |
+| Themes | 7 curated ANSI palettes |
+| Target frameworks | .NET 8 and .NET 10 |
+| Console sink | `Serilog.Sinks.Console` |
+| License | MIT |
+
+## 📦 Installation
+
+```shell
 dotnet add package Eigenverft.NetLib.SerilogThemes
 ```
 
-## Usage
+Or with the NuGet Package Manager:
+
+```powershell
+Install-Package Eigenverft.NetLib.SerilogThemes
+```
+
+## 🚀 Quick start
 
 ```csharp
 using Eigenverft.NetLib.SerilogThemes;
-
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -21,42 +50,83 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 ```
 
-## Available themes
+Switching the visual identity is intentionally simple:
+
+```csharp
+.WriteTo.Console(theme: AnsiConsoleThemes.Aurora)
+```
+
+## 🌈 Available themes
 
 | Theme | Character |
 | --- | --- |
-| `Aurora` | Aqua, mint, gold, and coral accents |
-| `Bloodline` | Dramatic red-and-white styling |
-| `ClarionDusk` | Bright dusk colors with clear log-level separation |
-| `CodingNight` | Visual Studio-inspired 256-color palette |
-| `EigenverftDark` | Dark Eigenverft palette using ANSI true color |
-| `ProfessionalNoir` | High-contrast neutrals with restrained accents |
-| `RetroGreen` | Green-centric monochrome CRT style |
+| 🌌 `Aurora` | Aqua, mint, gold, and coral accents |
+| 🩸 `Bloodline` | Dramatic red-and-white styling with text attributes |
+| 🌆 `ClarionDusk` | Bright dusk colors with clear log-level separation |
+| 🌙 `CodingNight` | Visual Studio-inspired 256-color palette |
+| ⚓ `EigenverftDark` | Near-black Eigenverft palette using ANSI true color |
+| 🎩 `ProfessionalNoir` | High-contrast neutrals with restrained accents |
+| 🟢 `RetroGreen` | Green-centric monochrome CRT style |
 
-## Terminal compatibility
+All themes are exposed as static properties on `AnsiConsoleThemes`:
 
-ANSI rendering depends on terminal capabilities. `EigenverftDark` uses 24-bit color sequences. `Bloodline` also uses text attributes such as underline, reverse video, and blink, which are not supported uniformly by all terminals.
+```csharp
+AnsiConsoleThemes.Aurora
+AnsiConsoleThemes.Bloodline
+AnsiConsoleThemes.ClarionDusk
+AnsiConsoleThemes.CodingNight
+AnsiConsoleThemes.EigenverftDark
+AnsiConsoleThemes.ProfessionalNoir
+AnsiConsoleThemes.RetroGreen
+```
 
-`EigenverftDark` is designed for a near-black terminal background comparable to the Eigenverft **Tarink** color (`rgb(9, 14, 15)`). It deliberately leaves the normal terminal background unchanged; only fatal events use an explicit background color.
+## 🖥️ Terminal compatibility
 
-## Target frameworks
+ANSI rendering depends on the terminal and its color capabilities.
 
-The library targets:
+- `EigenverftDark` uses 24-bit true-color escape sequences.
+- `CodingNight` uses a 256-color palette.
+- `Bloodline` uses attributes such as underline, reverse video, and blink; terminal support varies.
+- The remaining themes use broadly supported ANSI color sequences.
+
+`EigenverftDark` is designed for a near-black terminal background comparable to the Eigenverft **Tarink** color (`rgb(9, 14, 15)`). It normally leaves the terminal background untouched; only fatal events use an explicit background color.
+
+## 🎯 Target frameworks
+
+The package ships assets for:
 
 - `net8.0`
 - `net10.0`
 
-## Build and test
+.NET 9 consumers use the compatible `net8.0` asset.
 
-```powershell
+## 🧪 Build and test
+
+From the repository root:
+
+```shell
 dotnet build src/Eigenverft.NetLib.SerilogThemes.slnx --configuration Release
 dotnet test src/Eigenverft.NetLib.SerilogThemes.slnx --configuration Release
 ```
 
-## Releases
+## 🚢 Releases
 
-Commits to `main` are built, tested, documented, and published by the repository CI/CD pipeline. Package versions are generated by the Eigenverft Drydock versioning scheme; package history is available through NuGet and the Git repository.
+`main` is the production channel. Every accepted change is built, tested, documented, packed, and published by the repository CI/CD workflow.
 
-## License
+Package versions follow the Eigenverft Drydock timestamp-based versioning scheme. Published versions and download history are available on [NuGet.org](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes).
+
+## 🤝 Contributing and support
+
+- 🐛 [Open an issue](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/issues)
+- 🔧 [Submit a pull request](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/pulls)
+- 📦 [View the package on NuGet.org](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes)
+
+## 📄 License
 
 Licensed under the [MIT License](LICENSE) by Eigenverft.
+
+---
+
+<div align="center">
+Made with ❤️ by Eigenverft
+</div>
