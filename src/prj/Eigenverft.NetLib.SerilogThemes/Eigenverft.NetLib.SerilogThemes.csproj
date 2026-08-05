@@ -11,6 +11,7 @@
     <DebugType>embedded</DebugType>
     <IsPackable>true</IsPackable>
     <IsPublishable>false</IsPublishable>
+    <IsTestProject>false</IsTestProject>
     <VersionBuild>0</VersionBuild>
     <VersionMajor>1</VersionMajor>
     <VersionMinor>0</VersionMinor>
