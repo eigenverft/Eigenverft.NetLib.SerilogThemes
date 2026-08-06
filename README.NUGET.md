@@ -1,7 +1,5 @@
 # 🎨 Eigenverft.NetLib.SerilogThemes
 
-<!-- Maintenance note: This GitHub README has a NuGet/CommonMark counterpart in README.NUGET.md. When changing shared content here, update that file as needed. -->
-
 [![NuGet Version](https://img.shields.io/nuget/v/Eigenverft.NetLib.SerilogThemes?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![NuGet Downloads](https://img.shields.io/nuget/dt/Eigenverft.NetLib.SerilogThemes?label=Downloads&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![Build Status](https://img.shields.io/github/actions/workflow/status/eigenverft/Eigenverft.NetLib.SerilogThemes/cicd.yml?branch=main&label=build)](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/actions/workflows/cicd.yml) [![Targets](https://img.shields.io/badge/targets-net462%20%7C%20.NET%206%20%7C%208%20%7C%2010-512BD4?logo=dotnet&logoColor=white)](#-target-frameworks) [![License](https://img.shields.io/github/license/eigenverft/Eigenverft.NetLib.SerilogThemes?logo=mit)](LICENSE)
 
 Curated ANSI console themes for [`Serilog.Sinks.Console`](https://github.com/serilog/serilog-sinks-console), including the Eigenverft dark terminal palette.
@@ -150,6 +148,4 @@ Licensed under the [MIT License](LICENSE) by Eigenverft.
 
 ---
 
-<div align="center">
 Made with ❤️ by Eigenverft
-</div>
