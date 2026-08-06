@@ -1,8 +1,8 @@
 param (
-    [string]$GITHUB_TOKEN,
-    [string]$SECRET_NUGET_APIKEY,
-    [string]$SECRET_INTTESTNUGET_APIKEY,
-    [string]$SECRET_POWERSHELLGALLERY_APIKEY
+    [string]$GitHubToken,
+    [string]$NuGetApiKey,
+    [string]$IntTestNuGetApiKey,
+    [string]$PowerShellGalleryApiKey
 )
 
 # Fail-fast defaults for reliable CI/local runs:
@@ -53,18 +53,18 @@ $null = Test-CommandAvailable -Command "dotnet" -ExitIfNotFound
 $null = Test-CommandAvailable -Command "git" -ExitIfNotFound
 
 # In the case the secrets are not passed as parameters, try to get them from the secrets file, local development or CI/CD environment
-Test-VariableValue -Variable { $GITHUB_TOKEN } -WarnIfNullOrEmpty -HideValue
-Test-VariableValue -Variable { $SECRET_NUGET_APIKEY } -WarnIfNullOrEmpty -HideValue
-Test-VariableValue -Variable { $SECRET_INTTESTNUGET_APIKEY } -WarnIfNullOrEmpty -HideValue
-Test-VariableValue -Variable { $SECRET_POWERSHELLGALLERY_APIKEY } -WarnIfNullOrEmpty -HideValue
-$GITHUB_TOKEN = Get-ConfigValue -Check $GITHUB_TOKEN -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'GITHUB_TOKEN'
-$SECRET_NUGET_APIKEY = Get-ConfigValue -Check $SECRET_NUGET_APIKEY -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_NUGET_APIKEY'
-$SECRET_INTTESTNUGET_APIKEY = Get-ConfigValue -Check $SECRET_INTTESTNUGET_APIKEY -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_INTTESTNUGET_APIKEY'
-$SECRET_POWERSHELLGALLERY_APIKEY = Get-ConfigValue -Check $SECRET_POWERSHELLGALLERY_APIKEY -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_POWERSHELLGALLERY_APIKEY'
-Test-VariableValue -Variable { $GITHUB_TOKEN } -ExitIfNullOrEmpty -HideValue
-Test-VariableValue -Variable { $SECRET_NUGET_APIKEY } -ExitIfNullOrEmpty -HideValue
-Test-VariableValue -Variable { $SECRET_INTTESTNUGET_APIKEY } -ExitIfNullOrEmpty -HideValue
-Test-VariableValue -Variable { $SECRET_POWERSHELLGALLERY_APIKEY } -ExitIfNullOrEmpty -HideValue
+Test-VariableValue -Variable { $GitHubToken } -WarnIfNullOrEmpty -HideValue
+Test-VariableValue -Variable { $NuGetApiKey } -WarnIfNullOrEmpty -HideValue
+Test-VariableValue -Variable { $IntTestNuGetApiKey } -WarnIfNullOrEmpty -HideValue
+Test-VariableValue -Variable { $PowerShellGalleryApiKey } -WarnIfNullOrEmpty -HideValue
+$GitHubToken = Get-ConfigValue -Check $GitHubToken -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'GITHUB_TOKEN'
+$NuGetApiKey = Get-ConfigValue -Check $NuGetApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_NUGET_APIKEY'
+$IntTestNuGetApiKey = Get-ConfigValue -Check $IntTestNuGetApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_INTTESTNUGET_APIKEY'
+$PowerShellGalleryApiKey = Get-ConfigValue -Check $PowerShellGalleryApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_POWERSHELLGALLERY_APIKEY'
+Test-VariableValue -Variable { $GitHubToken } -ExitIfNullOrEmpty -HideValue
+Test-VariableValue -Variable { $NuGetApiKey } -ExitIfNullOrEmpty -HideValue
+Test-VariableValue -Variable { $IntTestNuGetApiKey } -ExitIfNullOrEmpty -HideValue
+Test-VariableValue -Variable { $PowerShellGalleryApiKey } -ExitIfNullOrEmpty -HideValue
 
 # Preload environment information
 $RunEnvironment = Get-RunEnvironment
@@ -118,7 +118,7 @@ $GitHubSourceUri = "https://nuget.pkg.github.com/$GitHubPackagesUser/index.json"
 $NuGetTestSourceUri = "https://apiint.nugettest.org/v3/index.json"
 $NuGetOrgSourceUri = "https://api.nuget.org/v3/index.json"
 Unregister-LocalNuGetDotNetPackageSource -SourceName "$GitHubSourceName"
-Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","add", "source", "--username", "$GitHubPackagesUser","--password","$GITHUB_TOKEN","--store-password-in-clear-text","--name","$GitHubSourceName","$GitHubSourceUri") -CaptureOutput $false -CaptureOutputDump $false -HideValues @($GITHUB_TOKEN)
+Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","add", "source", "--username", "$GitHubPackagesUser","--password","$GitHubToken","--store-password-in-clear-text","--name","$GitHubSourceName","$GitHubSourceUri") -CaptureOutput $false -CaptureOutputDump $false -HideValues @($GitHubToken)
 
 # Enable the .NET tools specified in the manifest file
 Enable-TempDotnetTools -ManifestFile "$DotNetToolsManifestPath" -NoReturn
@@ -410,7 +410,7 @@ if ($PushToGitHubSource -eq $true)
     $NuGetPackageFileInfos = Find-FilesByPattern -Path "$PackRootPath" -Pattern "*.nupkg"
     foreach ($NuGetPackageFileInfo in $NuGetPackageFileInfos)
     {
-        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","push", "$($NuGetPackageFileInfo.FullName)", "--api-key", "$GITHUB_TOKEN","--source","$GitHubSourceName") -HideValues @($GITHUB_TOKEN)
+        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","push", "$($NuGetPackageFileInfo.FullName)", "--api-key", "$GitHubToken","--source","$GitHubSourceName") -HideValues @($GitHubToken)
     }
     Unregister-LocalNuGetDotNetPackageSource -SourceName "$GitHubSourceName"
 }
@@ -420,7 +420,7 @@ if ($PushToNuGetTest -eq $true)
     $NuGetPackageFileInfos = Find-FilesByPattern -Path "$PackRootPath" -Pattern "*.nupkg"
     foreach ($NuGetPackageFileInfo in $NuGetPackageFileInfos)
     {
-        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","push", "$($NuGetPackageFileInfo.FullName)", "--api-key", "$SECRET_INTTESTNUGET_APIKEY","--source","$NuGetTestSourceUri") -HideValues @($SECRET_INTTESTNUGET_APIKEY)
+        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","push", "$($NuGetPackageFileInfo.FullName)", "--api-key", "$IntTestNuGetApiKey","--source","$NuGetTestSourceUri") -HideValues @($IntTestNuGetApiKey)
     }
 }
 
@@ -429,7 +429,7 @@ if ($PushToNuGetOrg -eq $true)
     $NuGetPackageFileInfos = Find-FilesByPattern -Path "$PackRootPath" -Pattern "*.nupkg"
     foreach ($NuGetPackageFileInfo in $NuGetPackageFileInfos)
     {
-        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","push", "$($NuGetPackageFileInfo.FullName)", "--api-key", "$SECRET_NUGET_APIKEY","--source","$NuGetOrgSourceUri") -HideValues @($SECRET_NUGET_APIKEY)
+        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("nuget","push", "$($NuGetPackageFileInfo.FullName)", "--api-key", "$NuGetApiKey","--source","$NuGetOrgSourceUri") -HideValues @($NuGetApiKey)
     }
 }
 
