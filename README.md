@@ -8,9 +8,6 @@ Curated ANSI console themes for [`Serilog.Sinks.Console`](https://github.com/ser
 
 Small package, focused API: pick a theme and pass it directly to `WriteTo.Console(...)`.
 
-> [!IMPORTANT]
-> This package is currently **pre-1.0**. Theme names and palettes may still evolve between releases.
-
 ---
 
 ## ✨ At a glance
