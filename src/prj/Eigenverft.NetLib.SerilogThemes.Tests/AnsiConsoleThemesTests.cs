@@ -17,8 +17,10 @@ namespace Eigenverft.NetLib.SerilogThemes.Tests
             nameof(AnsiConsoleThemes.ClarionDusk),
             nameof(AnsiConsoleThemes.CodingNight),
             nameof(AnsiConsoleThemes.EigenverftDark),
+            nameof(AnsiConsoleThemes.EigenverftHarbor),
             nameof(AnsiConsoleThemes.ProfessionalNoir),
             nameof(AnsiConsoleThemes.RetroGreen),
+            nameof(AnsiConsoleThemes.SignalSlate),
         };
 
         [TestMethod]
@@ -86,6 +88,72 @@ namespace Eigenverft.NetLib.SerilogThemes.Tests
                 AnsiConsoleThemes.EigenverftDark,
                 ConsoleThemeStyle.LevelFatal,
                 "\u001b[1;38;2;251;248;243;48;2;75;0;0m");
+        }
+
+        [TestMethod]
+        public void EigenverftHarbor_UsesHighContrastBrandAccents()
+        {
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHarbor,
+                ConsoleThemeStyle.SecondaryText,
+                "\u001b[38;2;116;185;205m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHarbor,
+                ConsoleThemeStyle.Name,
+                "\u001b[38;2;92;200;255m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHarbor,
+                ConsoleThemeStyle.String,
+                "\u001b[38;2;86;224;208m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHarbor,
+                ConsoleThemeStyle.Number,
+                "\u001b[38;2;255;138;61m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHarbor,
+                ConsoleThemeStyle.LevelWarning,
+                "\u001b[1;38;2;255;138;61m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHarbor,
+                ConsoleThemeStyle.LevelFatal,
+                "\u001b[1;38;2;251;248;243;48;2;132;37;15m");
+        }
+
+        [TestMethod]
+        public void SignalSlate_ReservesColorForSignalLevels()
+        {
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.Text,
+                "\u001b[38;5;248m");
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.Name,
+                "\u001b[38;5;252m");
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.String,
+                "\u001b[38;5;255m");
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.Number,
+                "\u001b[38;5;254m");
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.LevelInformation,
+                "\u001b[38;5;248m");
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.LevelWarning,
+                "\u001b[1;4;38;5;214m");
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.LevelError,
+                "\u001b[1;38;5;231;48;5;88m");
+            AssertStyle(
+                AnsiConsoleThemes.SignalSlate,
+                ConsoleThemeStyle.LevelFatal,
+                "\u001b[1;4;38;5;231;48;5;160m");
         }
 
         private static PropertyInfo[] GetThemeProperties()

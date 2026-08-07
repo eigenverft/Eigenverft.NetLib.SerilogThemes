@@ -21,34 +21,71 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
             new Dictionary<string, AnsiConsoleTheme>(StringComparer.OrdinalIgnoreCase)
             {
                 [nameof(AnsiConsoleThemes.EigenverftDark)] = AnsiConsoleThemes.EigenverftDark,
+                [nameof(AnsiConsoleThemes.EigenverftHarbor)] = AnsiConsoleThemes.EigenverftHarbor,
                 [nameof(AnsiConsoleThemes.Aurora)] = AnsiConsoleThemes.Aurora,
                 [nameof(AnsiConsoleThemes.Bloodline)] = AnsiConsoleThemes.Bloodline,
                 [nameof(AnsiConsoleThemes.ClarionDusk)] = AnsiConsoleThemes.ClarionDusk,
                 [nameof(AnsiConsoleThemes.CodingNight)] = AnsiConsoleThemes.CodingNight,
                 [nameof(AnsiConsoleThemes.ProfessionalNoir)] = AnsiConsoleThemes.ProfessionalNoir,
-                [nameof(AnsiConsoleThemes.RetroGreen)] = AnsiConsoleThemes.RetroGreen
+                [nameof(AnsiConsoleThemes.RetroGreen)] = AnsiConsoleThemes.RetroGreen,
+                [nameof(AnsiConsoleThemes.SignalSlate)] = AnsiConsoleThemes.SignalSlate
             };
 
         private static async Task<int> Main(string[] args)
         {
-            if (args.Any(argument => string.Equals(argument, "--list", StringComparison.OrdinalIgnoreCase)))
+            if (HasSwitch(args, "--list"))
             {
                 PrintAvailableThemes();
                 return 0;
             }
 
-            string requestedTheme = GetRequestedTheme(args) ?? nameof(AnsiConsoleThemes.EigenverftDark);
+            string? requestedTheme = GetRequestedTheme(args);
+            bool showAllThemes = requestedTheme is null || HasSwitch(args, "--all");
 
-            if (!Themes.TryGetValue(requestedTheme, out AnsiConsoleTheme? theme))
+            if (showAllThemes)
             {
-                global::System.Console.Error.WriteLine($"Unknown theme '{requestedTheme}'.");
+                global::System.Console.WriteLine("Eigenverft Serilog theme gallery");
+                global::System.Console.WriteLine("Every available theme is rendered below using the same preview data.");
+
+                foreach (KeyValuePair<string, AnsiConsoleTheme> entry in Themes)
+                {
+                    int exitCode = await RunThemePreviewAsync(entry.Key, entry.Value).ConfigureAwait(false);
+                    if (exitCode != 0)
+                    {
+                        return exitCode;
+                    }
+                }
+
+                PauseForExit();
+                return 0;
+            }
+
+            string requestedThemeName = requestedTheme
+                ?? throw new InvalidOperationException("A single-theme preview requires a theme name.");
+
+            if (!Themes.TryGetValue(requestedThemeName, out AnsiConsoleTheme? theme))
+            {
+                global::System.Console.Error.WriteLine($"Unknown theme '{requestedThemeName}'.");
                 PrintAvailableThemes();
                 return 2;
             }
 
+            int result = await RunThemePreviewAsync(requestedThemeName, theme).ConfigureAwait(false);
+            if (result == 0)
+            {
+                PauseForExit();
+            }
+
+            return result;
+        }
+
+        private static async Task<int> RunThemePreviewAsync(string themeName, AnsiConsoleTheme theme)
+        {
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
+                .MinimumLevel.Override("Microsoft.Hosting", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.Extensions.Hosting", LogEventLevel.Warning)
                 .WriteTo.Console(
                     restrictedToMinimumLevel: LogEventLevel.Verbose,
                     theme: theme,
@@ -59,18 +96,23 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
 
             try
             {
-                using IHost host = Host.CreateDefaultBuilder(args)
+                using IHost host = Host.CreateDefaultBuilder(Array.Empty<string>())
                     .ConfigureLogging(logging =>
                     {
                         logging.ClearProviders();
                         logging.AddSerilog(Log.Logger, dispose: false);
+                        // The host is intentionally real so the demo proves that
+                        // Microsoft.Extensions.Logging is routed through Serilog. Host lifecycle
+                        // noise is suppressed by the Serilog SourceContext overrides above.
                         logging.SetMinimumLevel(LogLevel.Trace);
                     })
                     .Build();
 
+                WriteThemeBlockHeader(themeName, theme);
+
                 await host.StartAsync().ConfigureAwait(false);
 
-                WriteThemePreview(requestedTheme);
+                WriteThemePreview(themeName);
 
                 ILogger<Program> microsoftLogger =
                     host.Services.GetRequiredService<ILogger<Program>>();
@@ -78,15 +120,9 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
                 microsoftLogger.LogInformation(
                     "Microsoft.Extensions.Logging is routed through the same Serilog logger and theme.");
 
-                if (!global::System.Console.IsInputRedirected)
-                {
-                    global::System.Console.WriteLine();
-                    global::System.Console.Write("Press any key to exit ...");
-                    global::System.Console.ReadKey(intercept: true);
-                    global::System.Console.WriteLine();
-                }
-
                 await host.StopAsync().ConfigureAwait(false);
+
+                WriteThemeBlockFooter(theme);
                 return 0;
             }
             catch (Exception exception)
@@ -100,12 +136,37 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
             }
         }
 
-        private static void WriteThemePreview(string themeName)
+        private static void WriteThemeBlockHeader(string themeName, AnsiConsoleTheme theme)
         {
             global::System.Console.WriteLine();
-            global::System.Console.WriteLine($"Eigenverft Serilog theme preview: {themeName}");
-            global::System.Console.WriteLine(new string('-', 56));
+            WriteThemedLine(theme, ConsoleThemeStyle.SecondaryText, new string('=', 72));
 
+            theme.Set(global::System.Console.Out, ConsoleThemeStyle.SecondaryText);
+            global::System.Console.Write("THEME: ");
+            theme.Set(global::System.Console.Out, ConsoleThemeStyle.Name);
+            global::System.Console.WriteLine(themeName);
+            theme.Reset(global::System.Console.Out);
+
+            WriteThemedLine(theme, ConsoleThemeStyle.SecondaryText, new string('=', 72));
+        }
+
+        private static void WriteThemeBlockFooter(AnsiConsoleTheme theme)
+        {
+            WriteThemedLine(theme, ConsoleThemeStyle.SecondaryText, new string('=', 72));
+        }
+
+        private static void WriteThemedLine(
+            AnsiConsoleTheme theme,
+            ConsoleThemeStyle style,
+            string text)
+        {
+            theme.Set(global::System.Console.Out, style);
+            global::System.Console.WriteLine(text);
+            theme.Reset(global::System.Console.Out);
+        }
+
+        private static void WriteThemePreview(string themeName)
+        {
             Log.Verbose(
                 "Verbose message: Starting operation with parameters {@Parameters}",
                 new { Param1 = "Value1", Param2 = 123 });
@@ -148,6 +209,11 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
                 });
         }
 
+        private static bool HasSwitch(string[] args, string switchName)
+        {
+            return args.Any(argument => string.Equals(argument, switchName, StringComparison.OrdinalIgnoreCase));
+        }
+
         private static string? GetRequestedTheme(string[] args)
         {
             for (int index = 0; index < args.Length; index++)
@@ -179,11 +245,24 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
                     themeName,
                     nameof(AnsiConsoleThemes.EigenverftDark),
                     StringComparison.Ordinal)
-                    ? " (default)"
+                    ? " (Eigenverft default)"
                     : string.Empty;
 
                 global::System.Console.WriteLine($"  {themeName}{defaultMarker}");
             }
+        }
+
+        private static void PauseForExit()
+        {
+            if (global::System.Console.IsInputRedirected)
+            {
+                return;
+            }
+
+            global::System.Console.WriteLine();
+            global::System.Console.Write("Press any key to exit ...");
+            global::System.Console.ReadKey(intercept: true);
+            global::System.Console.WriteLine();
         }
     }
 }
