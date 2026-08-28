@@ -1,0 +1,8 @@
+﻿## Bill of Materials Report for Projects: Eigenverft.NetLib.SerilogThemes.Console - 2026-08-28 UTC
+
+| ProjectName | Package | ResolvedVersion |
+|-------------|---------|-----------------|
+| Eigenverft.NetLib.SerilogThemes.Console | Microsoft.NET.ILLink.Tasks | 10.0.11 |
+| Eigenverft.NetLib.SerilogThemes.Console | Serilog.Extensions.Hosting | 10.0.0 |
+| Eigenverft.NetLib.SerilogThemes.Console | Microsoft.Extensions.Hosting | 10.0.11 |
+| Eigenverft.NetLib.SerilogThemes.Console | Serilog | 4.4.0 |
