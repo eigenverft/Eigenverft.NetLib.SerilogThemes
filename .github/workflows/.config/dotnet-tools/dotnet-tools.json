@@ -9,13 +9,6 @@
       ],
       "rollForward": false
     },
-    "docfx": {
-      "version": "2.74.1",
-      "commands": [
-        "docfx"
-      ],
-      "rollForward": false
-    },
     "Eigenverft.Distributed.Drydock": {
       "version": "0.1.20257.10053-dev",
       "commands": [

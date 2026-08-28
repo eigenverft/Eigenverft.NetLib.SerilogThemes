@@ -1,0 +1,14 @@
+===================================================================
+THIRD-PARTY LICENSE NOTICES - Eigenverft.NetLib.SerilogThemes
+===================================================================
+
+This project includes third-party libraries under open-source licenses.
+
+--------------------------------------------
+Package: Serilog.Sinks.Console (v6.1.1)
+License: Apache-2.0
+License URL: https://licenses.nuget.org/Apache-2.0
+Authors: Serilog Contributors
+Project: https://github.com/serilog/serilog-sinks-console
+--------------------------------------------
+
