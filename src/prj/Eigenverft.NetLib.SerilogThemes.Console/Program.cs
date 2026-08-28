@@ -22,6 +22,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
             {
                 [nameof(AnsiConsoleThemes.EigenverftDark)] = AnsiConsoleThemes.EigenverftDark,
                 [nameof(AnsiConsoleThemes.EigenverftHarbor)] = AnsiConsoleThemes.EigenverftHarbor,
+                [nameof(AnsiConsoleThemes.EigenverftHorizon)] = AnsiConsoleThemes.EigenverftHorizon,
                 [nameof(AnsiConsoleThemes.Aurora)] = AnsiConsoleThemes.Aurora,
                 [nameof(AnsiConsoleThemes.Bloodline)] = AnsiConsoleThemes.Bloodline,
                 [nameof(AnsiConsoleThemes.ClarionDusk)] = AnsiConsoleThemes.ClarionDusk,
