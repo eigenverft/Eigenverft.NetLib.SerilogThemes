@@ -59,6 +59,7 @@ Switching the visual identity is intentionally simple:
 | 🌙 `CodingNight` | Visual Studio-inspired 256-color palette |
 | ⚓ `EigenverftDark` | Near-black Eigenverft palette using ANSI true color |
 | 🌊 `EigenverftHarbor` | Color-rich Eigenverft palette with bright harbor blue, teal, orange, violet, and coral accents |
+| 🌅 `EigenverftHorizon` | Background-neutral Eigenverft `on_all` palette for terminals without a fixed light/dark mode |
 | 🎩 `ProfessionalNoir` | High-contrast neutrals with restrained accents |
 | 🟢 `RetroGreen` | Green-centric monochrome CRT style |
 | ◉ `SignalSlate` | Muted grayscale for long log streams with strong warning, error, and fatal signals |
@@ -72,6 +73,7 @@ AnsiConsoleThemes.ClarionDusk
 AnsiConsoleThemes.CodingNight
 AnsiConsoleThemes.EigenverftDark
 AnsiConsoleThemes.EigenverftHarbor
+AnsiConsoleThemes.EigenverftHorizon
 AnsiConsoleThemes.ProfessionalNoir
 AnsiConsoleThemes.RetroGreen
 AnsiConsoleThemes.SignalSlate
@@ -81,7 +83,7 @@ AnsiConsoleThemes.SignalSlate
 
 ANSI rendering depends on the terminal and its color capabilities.
 
-- `EigenverftDark` and `EigenverftHarbor` use 24-bit true-color escape sequences.
+- `EigenverftDark`, `EigenverftHarbor`, and `EigenverftHorizon` use 24-bit true-color escape sequences.
 - `CodingNight` and `SignalSlate` use 256-color palettes.
 - `Bloodline` uses attributes such as underline, reverse video, and blink; terminal support varies.
 - The remaining themes use broadly supported ANSI color sequences.
@@ -89,6 +91,8 @@ ANSI rendering depends on the terminal and its color capabilities.
 `EigenverftDark` is designed for a near-black terminal background comparable to the Eigenverft **Tarink** color (`rgb(9, 14, 15)`). It normally leaves the terminal background untouched; only fatal events use an explicit background color.
 
 `EigenverftHarbor` targets the same dark-terminal environment, but deliberately avoids Bluecoat navy as foreground text. It keeps Icesail for readability and uses brighter blue/cyan plus orange and complementary accents for stronger semantic separation.
+
+`EigenverftHorizon` is the background-neutral interpretation of the canonical Eigenverft `on_all` palette (`#1FA7C4`, `#0F88A3`, `#F07A00`). Ordinary text keeps the terminal's default foreground and background, while the brand colors identify structured values and information/warning signals. Error and fatal levels retain explicit high-contrast red signaling, so the theme does not assume either a light or dark terminal.
 
 `SignalSlate` is optimized for scanning long-running logs: repeated message text stays deliberately muted, changing structured names and values step toward white for faster scanning, and color is reserved for warning, error, and fatal level markers.
 

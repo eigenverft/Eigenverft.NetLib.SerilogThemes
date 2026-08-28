@@ -18,6 +18,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Tests
             nameof(AnsiConsoleThemes.CodingNight),
             nameof(AnsiConsoleThemes.EigenverftDark),
             nameof(AnsiConsoleThemes.EigenverftHarbor),
+            nameof(AnsiConsoleThemes.EigenverftHorizon),
             nameof(AnsiConsoleThemes.ProfessionalNoir),
             nameof(AnsiConsoleThemes.RetroGreen),
             nameof(AnsiConsoleThemes.SignalSlate),
@@ -117,6 +118,43 @@ namespace Eigenverft.NetLib.SerilogThemes.Tests
                 AnsiConsoleThemes.EigenverftHarbor,
                 ConsoleThemeStyle.LevelFatal,
                 "\u001b[1;38;2;251;248;243;48;2;132;37;15m");
+        }
+
+        [TestMethod]
+        public void EigenverftHorizon_UsesNeutralOnAllPalette()
+        {
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.Text,
+                "\u001b[39m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.Name,
+                "\u001b[1;38;2;31;167;196m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.String,
+                "\u001b[38;2;15;136;163m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.Number,
+                "\u001b[1;38;2;240;122;0m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.LevelInformation,
+                "\u001b[1;38;2;31;167;196m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.LevelWarning,
+                "\u001b[1;38;2;9;14;15;48;2;240;122;0m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.LevelError,
+                "\u001b[1;38;2;251;248;243;48;2;132;37;15m");
+            AssertStyle(
+                AnsiConsoleThemes.EigenverftHorizon,
+                ConsoleThemeStyle.LevelFatal,
+                "\u001b[1;4;38;2;251;248;243;48;2;160;0;0m");
         }
 
         [TestMethod]
