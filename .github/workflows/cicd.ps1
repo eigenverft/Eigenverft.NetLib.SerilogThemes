@@ -57,10 +57,10 @@ Test-VariableValue -Variable { $GitHubToken } -WarnIfNullOrEmpty -HideValue
 Test-VariableValue -Variable { $NuGetApiKey } -WarnIfNullOrEmpty -HideValue
 Test-VariableValue -Variable { $IntTestNuGetApiKey } -WarnIfNullOrEmpty -HideValue
 Test-VariableValue -Variable { $PowerShellGalleryApiKey } -WarnIfNullOrEmpty -HideValue
-$GitHubToken = Get-ConfigValue -Check $GitHubToken -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'GITHUB_TOKEN'
-$NuGetApiKey = Get-ConfigValue -Check $NuGetApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_NUGET_APIKEY'
-$IntTestNuGetApiKey = Get-ConfigValue -Check $IntTestNuGetApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_INTTESTNUGET_APIKEY'
-$PowerShellGalleryApiKey = Get-ConfigValue -Check $PowerShellGalleryApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'SECRET_POWERSHELLGALLERY_APIKEY'
+$GitHubToken = Get-ConfigValue -Check $GitHubToken -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'GitHubToken'
+$NuGetApiKey = Get-ConfigValue -Check $NuGetApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'NuGetApiKey'
+$IntTestNuGetApiKey = Get-ConfigValue -Check $IntTestNuGetApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'IntTestNuGetApiKey'
+$PowerShellGalleryApiKey = Get-ConfigValue -Check $PowerShellGalleryApiKey -FilePath (Join-Path $PSScriptRoot 'cicd.secrets.json') -Property 'PowerShellGalleryApiKey'
 Test-VariableValue -Variable { $GitHubToken } -ExitIfNullOrEmpty -HideValue
 Test-VariableValue -Variable { $NuGetApiKey } -ExitIfNullOrEmpty -HideValue
 Test-VariableValue -Variable { $IntTestNuGetApiKey } -ExitIfNullOrEmpty -HideValue
@@ -108,8 +108,6 @@ $DotNetToolsManifestPath = Get-Path -Paths @("$ConfigRootPath","dotnet-tools","d
 $NuGetAllowedLicensesPath = Get-Path -Paths @("$ConfigRootPath","nuget-license","allowed-licenses.json")
 $NuGetLicenseMappingsPath = Get-Path -Paths @("$ConfigRootPath","nuget-license","licenses-mapping.json")
 $NuGetLicenseFileMappingsPath = Get-Path -Paths @("$ConfigRootPath","nuget-license","license-file-mappings.json")
-$DocFxTemplatePath = Get-Path -Paths @("$ConfigRootPath","docfx","build","docfx_local.template.json")
-$IndexTemplatePath = Get-Path -Paths @("$ConfigRootPath","docfx","build","index.template.md")
 
 # Enable github specific nuget sources.
 $GitHubPackagesUser = "eigenverft"
@@ -138,6 +136,7 @@ $ChannelLatestRelativePath = Get-Path -Paths @($BranchDeploymentConfig.Channel.V
 $BuildRootPath = Get-Path -Paths @("$OutputRootPath","build")
 $BuildBinPath = Get-Path -Paths @("$BuildRootPath","bin")
 $BuildObjPath = Get-Path -Paths @("$BuildRootPath","obj")
+$TestObjPath = Get-Path -Paths @("$BuildRootPath","testobj")
 
 $PackRootPath = Get-Path -Paths @("$OutputRootPath","pack")
 $PublishRootPath = Get-Path -Paths @("$OutputRootPath","publish")
@@ -145,13 +144,24 @@ $RepoPublishRootPath = Get-Path -Paths @("$OutputRootPath","repopublish")
 $SlnPublishRootPath = Get-Path -Paths @("$OutputRootPath","slnpublish")
 $ProjPublishRootPath = Get-Path -Paths @("$OutputRootPath","projpublish")
 $ReportsRootPath =  Get-Path -Paths @("$OutputRootPath","reports")
-$DocsRootPath = Get-Path -Paths @("$OutputRootPath","docs")
 
-# Initialize the array to accumulate projects.
+# Build-report publication model
+# ------------------------------
+# SerilogThemes intentionally does not generate source/API documentation with DocFX. The current
+# build/release reports are still mirrored into docs/reports/<channel>/ so CI and local runs expose
+# the same dependency, vulnerability, license, and BOM results.
+$GitHubPagesDocsRootPath = Get-Path -Paths @("$GitRepositoryRoot","docs")
+$GitHubPagesReportsChannelPath = Get-Path -Paths @("$GitHubPagesDocsRootPath","reports",$BranchDeploymentConfig.Channel.Value)
+$GitHubPagesStagingRootPath = Get-Path -Paths @("$OutputRootPath","pages")
+$GitHubPagesReportsChannelStagingPath = Get-Path -Paths @("$GitHubPagesStagingRootPath","reports",$BranchDeploymentConfig.Channel.Value)
+
+# Main pipeline preparation: discover every solution below src and resolve its projects.
+# The resulting solution-to-project execution plan drives all subsequent build, test,
+# pack, publish, documentation, reporting, and distribution stages.
 $SolutionFileInfos = Find-FilesByPattern -Path "$GitRepositoryRoot\src" -Pattern "*.sln;*.slnx"
 $SolutionProjectPaths = @()
 foreach ($solutionFile in $SolutionFileInfos) {
-    # all ready sorted by the drydock.exe
+    # Drydock returns the project paths in their deterministic execution order.
     $CurrentProjectPaths = Invoke-ProcessTyped -Executable "drydock.exe" -Arguments @( "sln", "--location", "$($solutionFile.FullName)") -ReturnType 'Objects'
     $SolutionProjectPaths += [pscustomobject]@{ Sln =$solutionFile; Prj = ($CurrentProjectPaths | ForEach-Object { Get-Item $_ }) };
 }
@@ -168,11 +178,11 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
         New-Directory -Paths @($BuildRootPath)
         $BuildBinDirectory = New-Directory -Paths @($BuildBinPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$BranchVersionRelativePath)
         $BuildObjDirectory = New-Directory -Paths @($BuildObjPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$BranchVersionRelativePath)
-        
+        $TestObjDirectory = New-Directory -Paths @($TestObjPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$BranchVersionRelativePath)
+
         $PackDirectory = New-Directory -Paths @($PackRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
         $PublishDirectory = New-Directory -Paths @($PublishRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
         $ReportsDirectory = New-Directory -Paths @($ReportsRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
-        $DocsDirectory = New-Directory -Paths @($DocsRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
 
         $DotnetCommonParameters = @(
             "-p:Configuration=Release",
@@ -214,7 +224,7 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
         if ($LASTEXITCODE -eq -1) {
             $IsSDKProj = $true
         } else {
-            $IsNoneSDKProj = $true 
+            $IsNoneSDKProj = $true
         }
 
         # TargetFrameworkVersion not found assume sdk project style and get TargetFramework
@@ -233,6 +243,7 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
                     }
                 }
             } elseif ($LASTEXITCODE -eq 0) {
+                $TargetFrameworks = @($TargetFramework)
                 if ($TargetFramework -in @('net20', 'net35', 'net40', 'net403', 'net45', 'net451', 'net452', 'net46', 'net461', 'net462', 'net47', 'net471', 'net472', 'net48', 'net481'))
                 {
                    $IsSDKWithFramework = $true
@@ -242,12 +253,12 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
 
         # Sequence for framework and dotnet core projects , restore,clean,restore needed for proper incremental build
         Invoke-ProcessTyped -Executable "dotnet" -Arguments @("restore", "$($ProjectFileInfo.FullName)", "-p:Stage=restore") -ReturnType Objects -CommonArguments $DotnetCommonParameters
-        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("clean", "$($ProjectFileInfo.FullName)", "-p:Stage=clean") -ReturnType Objects -CommonArguments $DotnetCommonParameters 
-        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("restore", "$($ProjectFileInfo.FullName)", "-p:Stage=restore") -ReturnType Objects -CommonArguments $DotnetCommonParameters 
+        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("clean", "$($ProjectFileInfo.FullName)", "-p:Stage=clean") -ReturnType Objects -CommonArguments $DotnetCommonParameters
+        Invoke-ProcessTyped -Executable "dotnet" -Arguments @("restore", "$($ProjectFileInfo.FullName)", "-p:Stage=restore") -ReturnType Objects -CommonArguments $DotnetCommonParameters
 
         if ($IsNoneSDKProj)
         {
-            Invoke-ProcessTyped -Executable "$MsBuildVs" -Arguments @("$($ProjectFileInfo.FullName)", "-p:Stage=build") -CommonArguments $NonSDKParameters -ReturnType Objects -CaptureOutput $true -CaptureOutputDump $false            
+            Invoke-ProcessTyped -Executable "$MsBuildVs" -Arguments @("$($ProjectFileInfo.FullName)", "-p:Stage=build") -CommonArguments $NonSDKParameters -ReturnType Objects -CaptureOutput $true -CaptureOutputDump $false
         }
 
         if ($IsSDKProj)
@@ -277,19 +288,19 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
             $VulnerabilitiesJson = Invoke-ProcessTyped -Executable "dotnet" -Arguments @("list", "$($ProjectFileInfo.FullName)", "package", "--vulnerable", "--format", "json")
             New-DotnetVulnerabilitiesReport -jsonInput $VulnerabilitiesJson -OutputFile "$ReportsDirectory\Vulnerabilities.md" -OutputFormat markdown -ExitOnVulnerability $false
             New-DotnetVulnerabilitiesReport -jsonInput $VulnerabilitiesJson -OutputFile "$ReportsDirectory\Vulnerabilities.txt" -OutputFormat text -ExitOnVulnerability $false
-        
+
             $DeprecatedPackagesJson = Invoke-ProcessTyped -Executable "dotnet" -Arguments @("list", "$($ProjectFileInfo.FullName)", "package", "--deprecated", "--include-transitive", "--format", "json")
             New-DotnetDeprecatedReport -jsonInput $DeprecatedPackagesJson -OutputFile "$ReportsDirectory\Deprecated.md" -OutputFormat markdown -IgnoreTransitivePackages $true -ExitOnDeprecated $false
             New-DotnetDeprecatedReport -jsonInput $DeprecatedPackagesJson -OutputFile "$ReportsDirectory\Deprecated.txt" -OutputFormat text -IgnoreTransitivePackages $true -ExitOnDeprecated $false
-        
+
             $OutdatedPackagesJson = Invoke-ProcessTyped -Executable "dotnet" -Arguments @("list", "$($ProjectFileInfo.FullName)", "package", "--outdated", "--include-transitive", "--format", "json")
             New-DotnetOutdatedReport -jsonInput $OutdatedPackagesJson -OutputFile "$ReportsDirectory\Outdated.md" -OutputFormat markdown -IgnoreTransitivePackages $false
             New-DotnetOutdatedReport -jsonInput $OutdatedPackagesJson -OutputFile "$ReportsDirectory\Outdated.txt" -OutputFormat text -IgnoreTransitivePackages $false
-        
+
             $BillOfMaterialsJson = Invoke-ProcessTyped -Executable "dotnet" -Arguments @("list", "$($ProjectFileInfo.FullName)", "package", "--include-transitive", "--format", "json")
             New-DotnetBillOfMaterialsReport -jsonInput $BillOfMaterialsJson -OutputFile "$ReportsDirectory\BillOfMaterials.md" -OutputFormat markdown -IgnoreTransitivePackages $true
             New-DotnetBillOfMaterialsReport -jsonInput $BillOfMaterialsJson -OutputFile "$ReportsDirectory\BillOfMaterials.txt" -OutputFormat text -IgnoreTransitivePackages $true
-        
+
             Join-FileText -InputFiles @("$ReportsDirectory\BillOfMaterials.txt", "$ReportsDirectory\Vulnerabilities.txt","$ReportsDirectory\Deprecated.txt") -OutputFile "$ReportsDirectory\SBOM-$(($ProjectFileInfo.BaseName).Replace('.','_'))" -BetweenFiles 'One'
 
             $NuGetLicenseReportPath = "$ReportsDirectory/$($ProjectFileInfo.BaseName).ThirdPartyLicencesNotices.json"
@@ -311,7 +322,11 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
 
         if ($IsTestProject -eq $true)
         {
-            Invoke-ProcessTyped -Executable "dotnet" -Arguments @("test", "$($ProjectFileInfo.FullName)", "-c", "Release","-p:""Stage=test""")  -CommonArguments $DotnetCommonParameters -CaptureOutput $false
+            foreach ($TestTargetFramework in $TargetFrameworks)
+            {
+                $TestCommonParameters = $DotnetCommonParameters -replace '^-p:IntermediateOutputPath=.*$', "-p:IntermediateOutputPath=$($TestObjDirectory)/$($TestTargetFramework)/"
+                Invoke-ProcessTyped -Executable "dotnet" -Arguments @("test", "$($ProjectFileInfo.FullName)", "-c", "Release", "-f", "$TestTargetFramework", '-p:Stage=test' ) -CommonArguments $TestCommonParameters -CaptureOutput $false
+            }
         }
 
         if ($IsPackable -eq $true)
@@ -327,26 +342,18 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
         if ($IsNoneSDKProj) {
             Copy-FilesRecursively -SourceDirectory "$($BuildBinDirectory)" -DestinationDirectory "$($PublishDirectory)" -Filter "*" -CopyEmptyDirs $false -ForceOverwrite $true -CleanDestination MirrorTree
         }
-         
-        if ($IsPackable -eq $true)
-        {
-            $DocFxReplacementsByToken = @{
-                "sourceCodeDirectory" = "$($ProjectFileInfo.DirectoryName.Replace('\','/'))"
-                "outputDirectory"     = (Get-Path -Paths @("$DocsDirectory","docfx")).Replace('\','/')
-                "appName"     = "$($ProjectFileInfo.BaseName)"
-            }
-            $DocFxConfigFileInfos = Convert-TemplateFilePlaceholders -TemplateFile $DocFxTemplatePath -Replacements $DocFxReplacementsByToken
-            $null = Convert-TemplateFilePlaceholders -TemplateFile $IndexTemplatePath -Replacements $DocFxReplacementsByToken
-            Invoke-ProcessTyped -Executable "docfx" -Arguments @("$($DocFxConfigFileInfos.FullName)")  -CaptureOutput $false -CaptureOutputDump $true
-        }
-        
+
+        # DocFX generation is intentionally disabled for SerilogThemes. This package is a small
+        # theme library; build/release reports remain useful, while generated API documentation
+        # would add publication noise without improving the intended consumer experience.
+
     }
 }
 
-#$ThirdPartyLicencesNoticesFiles = Find-FilesByPattern -Path "$ReportsRootPath" -Pattern "*.ThirdPartyLicencesNotices.txt" | ForEach-Object { $_.FullName } 
+#$ThirdPartyLicencesNoticesFiles = Find-FilesByPattern -Path "$ReportsRootPath" -Pattern "*.ThirdPartyLicencesNotices.txt" | ForEach-Object { $_.FullName }
 #$THIRDPARTYDirectory = New-Directory -Paths @($PublishDirectory,"THIRDPARTY-LICENSES-NOTICE")
 #Join-FileText -InputFiles @($ThirdPartyLicencesNoticesFiles) -OutputFile "$THIRDPARTYDirectory\THIRDPARTY-LICENSE-NOTICE" -BetweenFiles 'One'
-#$InventoryHealthReportFiles = Find-FilesByPattern -Path "$ReportsRootPath" -Pattern "*.Inventory-Health-Report.txt" | ForEach-Object { $_.FullName } 
+#$InventoryHealthReportFiles = Find-FilesByPattern -Path "$ReportsRootPath" -Pattern "*.Inventory-Health-Report.txt" | ForEach-Object { $_.FullName }
 #Join-FileText -InputFiles @($InventoryHealthReportFiles) -OutputFile "$PublishDirectory\BOM-HEALTH" -BetweenFiles 'One'
 
 # Resolving deployment information for the current branch
@@ -433,23 +440,101 @@ if ($PushToNuGetOrg -eq $true)
     }
 }
 
-# additional publish copys
+# Publish the current deployment-channel build-report snapshot.
+# Reports are generated once, staged under output/pages, and mirrored to docs/reports/<channel>/.
+# In CI the changed report snapshot is committed back to the current branch. Because the workflow
+# only triggers automatically for src/** changes, the report-only commit cannot recurse.
+$null = New-Directory -Paths @($GitHubPagesReportsChannelStagingPath)
+Remove-FilesByPattern -Path "$GitHubPagesReportsChannelStagingPath" -Pattern "*"
+
+foreach ($SolutionProjectPath in $SolutionProjectPaths) {
+    $SolutionFileInfo = $SolutionProjectPath.Sln
+
+    foreach ($ProjectFileInfo in $SolutionProjectPath.Prj) {
+        $ReportsDirectory = Get-Path -Paths @($ReportsRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
+
+        if (Test-Path -Path "$ReportsDirectory" -PathType Container)
+        {
+            Copy-FilesRecursively -SourceDirectory "$ReportsDirectory" -DestinationDirectory "$GitHubPagesReportsChannelStagingPath" -Filter "*" -CopyEmptyDirs $false -ForceOverwrite $true
+        }
+    }
+}
+
+# Build a small browsable index for the report channel from the files that were actually produced.
+$GitHubPagesReportFileInfos = @(Get-ChildItem -Path "$GitHubPagesReportsChannelStagingPath" -File | Sort-Object Name)
+$GitHubPagesReportLinks = @()
+foreach ($GitHubPagesReportFileInfo in $GitHubPagesReportFileInfos)
+{
+    $GitHubPagesReportFileNameHtml = [System.Net.WebUtility]::HtmlEncode($GitHubPagesReportFileInfo.Name)
+    $GitHubPagesReportFileUrl = [System.Uri]::EscapeDataString($GitHubPagesReportFileInfo.Name)
+    $GitHubPagesReportLinks += ('<li><a href="{0}">{1}</a></li>' -f $GitHubPagesReportFileUrl,$GitHubPagesReportFileNameHtml)
+}
+
+$GitHubPagesReportListHtml = if ($GitHubPagesReportLinks.Count -gt 0) { $GitHubPagesReportLinks -join [Environment]::NewLine } else { "<li>No reports were produced by this build.</li>" }
+$GitHubPagesReportIndexHtml = @"
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$DeploymentChannel build reports - $GitRepositoryName</title>
+</head>
+<body>
+  <main>
+    <h1>$DeploymentChannel build reports</h1>
+    <p>Reports produced by the current $DeploymentChannel CI/CD snapshot.</p>
+    <ul>
+$GitHubPagesReportListHtml
+    </ul>
+  </main>
+</body>
+</html>
+"@
+Set-Content -Path (Get-Path -Paths @($GitHubPagesReportsChannelStagingPath,"index.html")) -Value $GitHubPagesReportIndexHtml -Encoding UTF8
+
+$null = New-Directory -Paths @($GitHubPagesReportsChannelPath)
+Copy-FilesRecursively -SourceDirectory "$GitHubPagesReportsChannelStagingPath" -DestinationDirectory "$GitHubPagesReportsChannelPath" -Filter "*" -CopyEmptyDirs $false -ForceOverwrite $true -CleanDestination MirrorTree
+
+if ($RunEnvironment.IsCI)
+{
+    # The report snapshot is committed only when it changed. `contents: write` is therefore required
+    # in cicd.yml, while the src/** trigger prevents a report-only commit from starting another release.
+    $GitHubPagesReportsGitPath = "docs/reports/$DeploymentChannel"
+    $GitHubPagesChannelGitStatus = @(& git -C "$GitRepositoryRoot" status --porcelain -- "$GitHubPagesReportsGitPath")
+    if ($LASTEXITCODE -ne 0)
+    {
+        throw "Unable to inspect Git status for '$DeploymentChannel' report publication path."
+    }
+
+    if ($GitHubPagesChannelGitStatus.Count -gt 0)
+    {
+        Invoke-GitAddCommitPush -TopLevelDirectory "$GitRepositoryRoot" -Folders @("$GitHubPagesReportsGitPath") -CurrentBranch "$GitCurrentBranch" -CommitMessage "Update $DeploymentChannel build reports [skip ci]" -SafeDirectory -ExitOnError
+    }
+    else
+    {
+        Write-Host "Build-report snapshot for '$DeploymentChannel' is unchanged. Git commit/push skipped."
+    }
+}
+else
+{
+    Write-Host "Build-report snapshot updated locally at '$GitHubPagesReportsChannelPath'. Git commit/push skipped outside CI."
+}
+
+# Enrich every project publish tree before creating distributable drops.
+# Compliance files are copied next to binaries. SerilogThemes intentionally carries no generated
+# DocFX tree in its distributable drops.
 foreach ($SolutionProjectPath in $SolutionProjectPaths) {
     foreach ($ProjectFileInfo in $SolutionProjectPath.Prj) {
         $SolutionFileInfo = $SolutionProjectPath.Sln
             $PublishDirectory = New-Directory -Paths @($PublishRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
             $ReportsDirectory = New-Directory -Paths @($ReportsRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
-            $DocsDirectory = New-Directory -Paths @($DocsRootPath,$SolutionFileInfo.BaseName,$ProjectFileInfo.BaseName,$ChannelVersionRelativePath)
             Copy-FilesRecursively -SourceDirectory "$ReportsDirectory" -DestinationDirectory "$PublishDirectory" -Filter "LICENSE-*" -CopyEmptyDirs $false -ForceOverwrite $true
             Copy-FilesRecursively -SourceDirectory "$ReportsDirectory" -DestinationDirectory "$PublishDirectory" -Filter "SBOM-*" -CopyEmptyDirs $false -ForceOverwrite $true
-            if (Test-Path -Path "$DocsDirectory\docfx" -PathType Container)
-            {
-                Copy-FilesRecursively -SourceDirectory "$DocsDirectory\docfx" -DestinationDirectory "$PublishDirectory\DOCFX\$($ProjectFileInfo.BaseName)" -Filter "*" -CopyEmptyDirs $false -ForceOverwrite $true
-            }
      }
 }
 
-# additional publish cleanups
+# Remove build-only symbol files from every enriched project publish tree.
+# All repository-, solution-, and project-level drops below are created from these cleaned trees.
 foreach ($SolutionProjectPath in $SolutionProjectPaths) {
     foreach ($ProjectFileInfo in $SolutionProjectPath.Prj) {
         $SolutionFileInfo = $SolutionProjectPath.Sln
@@ -458,7 +543,14 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
      }
 }
 
-# repository based drops of files.
+# Every aggregation level below is exposed as:
+# - <channel>/<version>: version-specific snapshot
+# - <channel>/latest: refreshed copy of the latest version in that channel
+# - distributed: refreshed channel-independent distribution
+# - zipped/<name>.<version>-<affix>.zip: NuGet-style file name for a regular ZIP archive
+
+# Build the repository-level all-in-one drop by flattening the publish trees of every
+# project from every solution. Project output file names are therefore expected to be unique.
 $RepoPublishDirectory = New-Directory -Paths @($RepoPublishRootPath,$ChannelVersionRelativePath)
 foreach ($SolutionProjectPath in $SolutionProjectPaths) {
     $SolutionFileInfo = $SolutionProjectPath.Sln
@@ -475,7 +567,8 @@ $nugetFileEmulation = Join-Text -InputObject @("$nugetFilePart1","$($BranchDeplo
 Compress-Directory -SourceDirectory "$RepoPublishDirectory" -DestinationFile "$(Get-Path -Paths @($RepositoryDropRootPath,$GitRepositoryName,"zipped","$nugetFileEmulation.zip"))"
 
 
-# solution based drops of files.
+# Build one solution-level drop by flattening all project publish trees belonging to that
+# solution. The solution staging directory is cleared first to prevent stale artifacts.
 foreach ($SolutionProjectPath in $SolutionProjectPaths) {
     $SolutionFileInfo = $SolutionProjectPath.Sln
     $SolutionPublishDirectory = New-Directory -Paths @($SlnPublishRootPath,$SolutionFileInfo.BaseName,$ChannelVersionRelativePath)
@@ -492,7 +585,8 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
     Compress-Directory -SourceDirectory "$SolutionPublishDirectory" -DestinationFile "$(Get-Path -Paths @($SolutionsDropRootPath,$SolutionFileInfo.BaseName,"zipped","$nugetFileEmulation.zip"))"
 }
 
-# project based drops of files.
+# Build one project-level drop for every solution/project association.
+# Project drops are keyed by project base name, which must be unique across the repository.
 foreach ($SolutionProjectPath in $SolutionProjectPaths) {
     $SolutionFileInfo = $SolutionProjectPath.Sln
     foreach ($ProjectFileInfo in $SolutionProjectPath.Prj) {
@@ -507,4 +601,3 @@ foreach ($SolutionProjectPath in $SolutionProjectPaths) {
             Compress-Directory -SourceDirectory "$ProjPublishDirectory" -DestinationFile "$(Get-Path -Paths @($ProjectsDropRootPath,$ProjectFileInfo.BaseName,"zipped","$nugetFileEmulation.zip"))"
     }
 }
-

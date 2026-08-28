@@ -5,7 +5,10 @@
 name: cicd.yml
 
 permissions:
-  contents: read
+  # cicd.ps1 publishes the current build reports to docs/reports/<channel>/.
+  # The workflow still triggers automatically only for src/** changes, so the generated
+  # report-only commit cannot recursively start another release.
+  contents: write
   packages: write
 
 on:
