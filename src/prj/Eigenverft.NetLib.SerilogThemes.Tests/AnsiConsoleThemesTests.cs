@@ -19,6 +19,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Tests
             nameof(AnsiConsoleThemes.EigenverftDark),
             nameof(AnsiConsoleThemes.EigenverftHarbor),
             nameof(AnsiConsoleThemes.EigenverftHorizon),
+            nameof(AnsiConsoleThemes.Kiln),
             nameof(AnsiConsoleThemes.ProfessionalNoir),
             nameof(AnsiConsoleThemes.RetroGreen),
             nameof(AnsiConsoleThemes.SignalSlate),
@@ -192,6 +193,39 @@ namespace Eigenverft.NetLib.SerilogThemes.Tests
                 AnsiConsoleThemes.SignalSlate,
                 ConsoleThemeStyle.LevelFatal,
                 "\u001b[1;4;38;5;231;48;5;160m");
+        }
+
+        [TestMethod]
+        public void Kiln_UsesWarmCopperAndVerdigrisPalette()
+        {
+            AssertStyle(
+                AnsiConsoleThemes.Kiln,
+                ConsoleThemeStyle.Text,
+                "\u001b[38;2;231;221;208m");
+            AssertStyle(
+                AnsiConsoleThemes.Kiln,
+                ConsoleThemeStyle.Name,
+                "\u001b[38;2;214;161;95m");
+            AssertStyle(
+                AnsiConsoleThemes.Kiln,
+                ConsoleThemeStyle.String,
+                "\u001b[38;2;142;201;181m");
+            AssertStyle(
+                AnsiConsoleThemes.Kiln,
+                ConsoleThemeStyle.Number,
+                "\u001b[38;2;201;175;224m");
+            AssertStyle(
+                AnsiConsoleThemes.Kiln,
+                ConsoleThemeStyle.LevelWarning,
+                "\u001b[1;38;2;242;190;101m");
+            AssertStyle(
+                AnsiConsoleThemes.Kiln,
+                ConsoleThemeStyle.LevelError,
+                "\u001b[1;38;2;239;128;106m");
+            AssertStyle(
+                AnsiConsoleThemes.Kiln,
+                ConsoleThemeStyle.LevelFatal,
+                "\u001b[1;38;2;255;244;232;48;2;146;61;53m");
         }
 
         private static PropertyInfo[] GetThemeProperties()

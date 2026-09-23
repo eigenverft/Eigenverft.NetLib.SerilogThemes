@@ -27,6 +27,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
                 [nameof(AnsiConsoleThemes.Bloodline)] = AnsiConsoleThemes.Bloodline,
                 [nameof(AnsiConsoleThemes.ClarionDusk)] = AnsiConsoleThemes.ClarionDusk,
                 [nameof(AnsiConsoleThemes.CodingNight)] = AnsiConsoleThemes.CodingNight,
+                [nameof(AnsiConsoleThemes.Kiln)] = AnsiConsoleThemes.Kiln,
                 [nameof(AnsiConsoleThemes.ProfessionalNoir)] = AnsiConsoleThemes.ProfessionalNoir,
                 [nameof(AnsiConsoleThemes.RetroGreen)] = AnsiConsoleThemes.RetroGreen,
                 [nameof(AnsiConsoleThemes.SignalSlate)] = AnsiConsoleThemes.SignalSlate

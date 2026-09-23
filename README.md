@@ -16,7 +16,7 @@ Small package, focused API: pick a theme and pass it directly to `WriteTo.Consol
 | --- | --- |
 | Package | `Eigenverft.NetLib.SerilogThemes` |
 | API | `AnsiConsoleThemes.<ThemeName>` |
-| Themes | 9 curated ANSI palettes |
+| Themes | 11 curated ANSI palettes |
 | Target frameworks | .NET Framework 4.6.2 and .NET 6, 8, and 10 |
 | Console sink | `Serilog.Sinks.Console` |
 | License | MIT |
@@ -62,6 +62,7 @@ Switching the visual identity is intentionally simple:
 | ⚓ `EigenverftDark` | Near-black Eigenverft palette using ANSI true color |
 | 🌊 `EigenverftHarbor` | Color-rich Eigenverft palette with bright harbor blue, teal, orange, violet, and coral accents |
 | 🌅 `EigenverftHorizon` | Background-neutral Eigenverft `on_all` palette for terminals without a fixed light/dark mode |
+| 🔥 `Kiln` | Warm graphite, copper, and verdigris with clear amber and ember-red signals |
 | 🎩 `ProfessionalNoir` | High-contrast neutrals with restrained accents |
 | 🟢 `RetroGreen` | Green-centric monochrome CRT style |
 | ◉ `SignalSlate` | Muted grayscale for long log streams with strong warning, error, and fatal signals |
@@ -76,6 +77,7 @@ AnsiConsoleThemes.CodingNight
 AnsiConsoleThemes.EigenverftDark
 AnsiConsoleThemes.EigenverftHarbor
 AnsiConsoleThemes.EigenverftHorizon
+AnsiConsoleThemes.Kiln
 AnsiConsoleThemes.ProfessionalNoir
 AnsiConsoleThemes.RetroGreen
 AnsiConsoleThemes.SignalSlate
@@ -85,7 +87,7 @@ AnsiConsoleThemes.SignalSlate
 
 ANSI rendering depends on the terminal and its color capabilities.
 
-- `EigenverftDark`, `EigenverftHarbor`, and `EigenverftHorizon` use 24-bit true-color escape sequences.
+- `EigenverftDark`, `EigenverftHarbor`, `EigenverftHorizon`, and `Kiln` use 24-bit true-color escape sequences.
 - `CodingNight` and `SignalSlate` use 256-color palettes.
 - `Bloodline` uses attributes such as underline, reverse video, and blink; terminal support varies.
 - The remaining themes use broadly supported ANSI color sequences.
@@ -95,6 +97,8 @@ ANSI rendering depends on the terminal and its color capabilities.
 `EigenverftHarbor` targets the same dark-terminal environment, but deliberately avoids Bluecoat navy as foreground text. It keeps Icesail for readability and uses brighter blue/cyan plus orange and complementary accents for stronger semantic separation.
 
 `EigenverftHorizon` is the background-neutral interpretation of the canonical Eigenverft `on_all` palette (`#1FA7C4`, `#0F88A3`, `#F07A00`). Ordinary text keeps the terminal's default foreground and background, while the brand colors identify structured values and information/warning signals. Error and fatal levels retain explicit high-contrast red signaling, so the theme does not assume either a light or dark terminal.
+
+`Kiln` is designed for dark terminals. Warm ivory text sits beside copper property names, verdigris strings, and soft violet numbers. Amber warnings and ember-red errors remain easy to spot; only fatal level markers add a brick-red background.
 
 `SignalSlate` is optimized for scanning long-running logs: repeated message text stays deliberately muted, changing structured names and values step toward white for faster scanning, and color is reserved for warning, error, and fatal level markers.
 
@@ -111,6 +115,7 @@ Use `--theme` for a focused preview, or `--list` for the catalog:
 ```shell
 dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj -- --theme EigenverftHarbor
 dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj -- --theme EigenverftHorizon
+dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj -- --theme Kiln
 dotnet run --project src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj -- --list
 ```
 
