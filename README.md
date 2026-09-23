@@ -1,6 +1,6 @@
 # 🎨 Eigenverft.NetLib.SerilogThemes
 
-<!-- Maintenance note: This GitHub README has a NuGet/CommonMark counterpart in README.NUGET.md. When changing shared content here, update that file as needed. -->
+<!-- The NuGet package readme is maintained at src/prj/Eigenverft.NetLib.SerilogThemes/Properties/NugetMetadata/Readme.md. -->
 
 [![NuGet Version](https://img.shields.io/nuget/v/Eigenverft.NetLib.SerilogThemes?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![NuGet Downloads](https://img.shields.io/nuget/dt/Eigenverft.NetLib.SerilogThemes?label=Downloads&logo=nuget)](https://www.nuget.org/packages/Eigenverft.NetLib.SerilogThemes) [![Build Status](https://img.shields.io/github/actions/workflow/status/eigenverft/Eigenverft.NetLib.SerilogThemes/cicd.yml?branch=main&label=build)](https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes/actions/workflows/cicd.yml) [![Targets](https://img.shields.io/badge/targets-net462%20%7C%20.NET%206%20%7C%208%20%7C%2010-512BD4?logo=dotnet&logoColor=white)](#-target-frameworks) [![License](https://img.shields.io/github/license/eigenverft/Eigenverft.NetLib.SerilogThemes?logo=mit)](LICENSE)
 
@@ -143,8 +143,8 @@ This preserves the original .NET Framework compatibility while covering the .NET
 From the repository root:
 
 ```shell
-dotnet build src/Eigenverft.NetLib.SerilogThemes.slnx --configuration Release
-dotnet test src/Eigenverft.NetLib.SerilogThemes.slnx --configuration Release
+dotnet build src/sln/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogThemes.slnx --configuration Release
+dotnet test src/sln/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogThemes.slnx --configuration Release
 ```
 
 ## 🚢 Releases

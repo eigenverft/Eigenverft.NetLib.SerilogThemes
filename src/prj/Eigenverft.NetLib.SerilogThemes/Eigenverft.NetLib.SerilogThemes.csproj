@@ -4,7 +4,7 @@
   <!-- General build settings: defines the output type and target framework -->
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net462;net6.0;net8.0;net10.0</TargetFrameworks>
   </PropertyGroup>
 
   <!-- C# language features and debugging configuration -->
@@ -47,6 +47,8 @@
   <!-- Packaging and publish configuration -->
   <!-- EnablePackageValidation: TFM/runtime holes on pack. No baseline at generate; set PackageValidationBaselineVersion after the first nuget.org publish. -->
   <PropertyGroup>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <IsPackable>true</IsPackable>
     <IsPublishable>false</IsPublishable>
     <PublishRelease>true</PublishRelease>
@@ -55,9 +57,8 @@
     <EnablePackageValidation>true</EnablePackageValidation>
   </PropertyGroup>
 
-  <!-- SDK defaults stay. CheckEol: true for exe, skipped for Library. InvariantGlobalization unset = cultures on. -->
+  <!-- SDK defaults stay for globalization. Legacy target-framework warnings are handled above. -->
   <PropertyGroup>
-    <CheckEolTargetFramework>$(CheckEolTargetFramework)</CheckEolTargetFramework>
     <InvariantGlobalization>$(InvariantGlobalization)</InvariantGlobalization>
   </PropertyGroup>
 
@@ -66,6 +67,7 @@
     <GitVersionBaseDirectory>$(MSBuildProjectDirectory)\Properties</GitVersionBaseDirectory>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Nerdbank.GitVersioning" Version="3.10.94">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -74,17 +76,17 @@
   <!-- Package metadata -->
   <!-- https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices -->
   <PropertyGroup>
-    <Authors>Carsten Riedel</Authors>
-    <Owners>Carsten Riedel</Owners>
+    <Authors>Eigenverft</Authors>
+    <Owners>Eigenverft</Owners>
     <Company></Company>
-    <Copyright>Copyright © 2026 Carsten Riedel</Copyright>
+    <Copyright>Copyright (c) 2025-2026 Eigenverft</Copyright>
     <PackageId>Eigenverft.NetLib.SerilogThemes</PackageId>
-    <PackageTags>dotnet;class;library</PackageTags>
-    <PackageProjectUrl></PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <RepositoryType></RepositoryType>
+    <PackageTags>dotnet;serilog;console;ansi;theme;logging;eigenverft</PackageTags>
+    <PackageProjectUrl>https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/eigenverft/Eigenverft.NetLib.SerilogThemes</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <!-- NuGet gallery blurb. CDATA is optional and keeps multiline text. -->
-    <Description><![CDATA[]]></Description>
+    <Description><![CDATA[Curated ANSI console themes for Serilog, including the Eigenverft dark terminal palette.]]></Description>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Icon-128x128.png</PackageIcon>

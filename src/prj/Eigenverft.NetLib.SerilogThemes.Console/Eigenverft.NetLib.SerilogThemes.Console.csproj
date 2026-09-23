@@ -80,16 +80,16 @@
 
   <!-- Assembly identity (also NuGet Authors/Company/Copyright/Description when packing). -->
   <PropertyGroup>
-    <Authors>Carsten Riedel</Authors>
+    <Authors>Eigenverft</Authors>
     <Company></Company>
-    <Copyright>Copyright © 2026 Carsten Riedel</Copyright>
+    <Copyright>Copyright © 2026 Eigenverft</Copyright>
     <Description><![CDATA[]]></Description>
   </PropertyGroup>
 
   <!-- NuGet package metadata. Files live in Properties/NugetMetadata/. -->
   <!-- https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices -->
   <PropertyGroup>
-    <Owners>Carsten Riedel</Owners>
+    <Owners>Eigenverft</Owners>
     <PackageId>Eigenverft.NetLib.SerilogThemes.Console</PackageId>
     <PackageTags>dotnet;console</PackageTags>
     <PackageProjectUrl></PackageProjectUrl>

@@ -3,7 +3,7 @@
   <!-- General build settings: defines the output type and target framework -->
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net462;net6.0;net8.0;net10.0</TargetFrameworks>
   </PropertyGroup>
 
   <!-- C# language features and debugging configuration -->

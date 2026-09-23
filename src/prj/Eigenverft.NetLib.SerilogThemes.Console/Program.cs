@@ -14,7 +14,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
         /// <returns>0 (success).</returns>
         public static int Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            global::System.Console.WriteLine("Hello, World!");
             return 0;
         }
     }

@@ -8,7 +8,7 @@ _layout: landing
     
     </td>
     <td style="vertical-align: middle; border: 0; width: 100%;">
-      <h1 style="margin: 0;">Eigenverft.Routed.RequestFilters</h1>
+      <h1 style="margin: 0;">Eigenverft.NetLib.SerilogThemes</h1>
     </td>
   </tr>
 </table>
