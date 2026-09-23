@@ -1,3 +1,0 @@
-﻿## Deprecated Packages Report for Projects: Eigenverft.NetLib.SerilogThemes.Console - 2026-08-28 UTC
-
-No deprecated packages found.

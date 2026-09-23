@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/sln/" />
+  <!-- Paths are relative to this file's final location.
+       PlaceSolution SlnFolder      → src/sln/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogThemes.slnx
+       PlaceSolution BesideCsproj  → src/prj/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogThemes.slnx
+       PlaceSolution RepoRoot       → repo root, so src/prj/ and src/sln/. -->
+  <Folder Name="/sln/Eigenverft.NetLib.SerilogThemes/">
+    <File Path="Readme.md" />
+  </Folder>
+  <Folder Name="/prj/">
+    <Project Path="../../prj/Eigenverft.NetLib.SerilogThemes.Console.Tests/Eigenverft.NetLib.SerilogThemes.Console.Tests.csproj" />
+    <Project Path="../../prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib.SerilogThemes.Console.csproj" />
+    <Project Path="../../prj/Eigenverft.NetLib.SerilogThemes.Tests/Eigenverft.NetLib.SerilogThemes.Tests.csproj" />
+    <Project Path="../../prj/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogThemes.csproj" />
+  </Folder>
+</Solution>

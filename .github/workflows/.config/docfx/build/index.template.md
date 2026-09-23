@@ -2,25 +2,17 @@
 _layout: landing
 ---
 
-# {{appName}}
+<table border="0" style="border-collapse: collapse; width: 100%;">
+  <tr style="border: 0;">
+    <td style="vertical-align: middle; padding: 0px; border: 0;">
+    
+    </td>
+    <td style="vertical-align: middle; border: 0; width: 100%;">
+      <h1 style="margin: 0;">{{appName}}</h1>
+    </td>
+  </tr>
+</table>
 
-Curated ANSI console themes for Serilog's console sink, including an Eigenverft-specific dark terminal palette.
+## Quick Start Notes:
 
-## Get started
-
-Install the package and configure a theme in a few lines of code:
-
-```csharp
-using Eigenverft.NetLib.SerilogThemes;
-using Serilog;
-
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(theme: AnsiConsoleThemes.EigenverftDark)
-    .CreateLogger();
-```
-
-Continue with the [getting started guide](docs/getting-started.md) or browse the [API reference](xref:Eigenverft.NetLib.SerilogThemes).
-
-## Theme catalog
-
-`Aurora`, `Bloodline`, `ClarionDusk`, `CodingNight`, `EigenverftDark`, `ProfessionalNoir`, and `RetroGreen` are available through the static `AnsiConsoleThemes` catalog.
+1. Click on API in the top navbar.

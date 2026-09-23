@@ -31,22 +31,22 @@
   </PropertyGroup>
 
   <!-- coverlet.msbuild: CollectCoverage is enough for `dotnet test` on SDK MSBuild. -->
-  <!-- Include is the packable library only (sourceName). Threshold fails the test run when that assembly is under 100% line/branch/method total. -->
+  <!-- Include is the console app only (sourceName). Threshold fails the test run when that assembly is under 100% line/branch/method total. -->
   <PropertyGroup>
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>opencover,json</CoverletOutputFormat>
     <CoverletOutput>./CoverletOutput/</CoverletOutput>
-    <Include>[Eigenverft.NetLib.SerilogThemes]*</Include>
+    <Include>[Eigenverft.NetLib.SerilogThemes.Console]*</Include>
     <Threshold>100</Threshold>
     <ThresholdType>line,branch,method</ThresholdType>
     <ThresholdStat>total</ThresholdStat>
   </PropertyGroup>
 
 
-  <!-- Package inventory of the packable library, not this test project. -->
+  <!-- Package inventory of the console app, not this test project. -->
   <PropertyGroup>
     <NugetReportDir Condition=" '$(NugetReportDir)' == '' ">$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'NugetReport'))</NugetReportDir>
-    <NugetReportProject Condition=" '$(NugetReportProject)' == '' ">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'Eigenverft.NetLib.SerilogThemes', 'Eigenverft.NetLib.SerilogThemes.csproj'))</NugetReportProject>
+    <NugetReportProject Condition=" '$(NugetReportProject)' == '' ">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'Eigenverft.NetLib.SerilogThemes.Console', 'Eigenverft.NetLib.SerilogThemes.Console.csproj'))</NugetReportProject>
   </PropertyGroup>
   <Target Name="WriteNugetReport" AfterTargets="PostBuildEvent">
     <PropertyGroup>
@@ -66,9 +66,9 @@
     <None Remove=".gitignore" />
   </ItemGroup>
 
-  <!-- Keep both test TFMs and reference the matching Eigenverft.NetLib.SerilogThemes TFM for each test build. -->
+  <!-- Keep both test TFMs and reference the matching Eigenverft.NetLib.SerilogThemes.Console TFM for each test build. -->
   <ItemGroup>
-    <ProjectReference Include="..\Eigenverft.NetLib.SerilogThemes\Eigenverft.NetLib.SerilogThemes.csproj">
+    <ProjectReference Include="..\Eigenverft.NetLib.SerilogThemes.Console\Eigenverft.NetLib.SerilogThemes.Console.csproj">
       <SetTargetFramework>TargetFramework=$(TargetFramework)</SetTargetFramework>
     </ProjectReference>
   </ItemGroup>
