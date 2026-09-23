@@ -16,7 +16,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Console.Tests
         [TestMethod]
         public void TestMainMethod()
         {
-            var result = Eigenverft.NetLib.SerilogThemes.Console.Program.Main(System.Array.Empty<string>());
+            var result = Eigenverft.NetLib.SerilogThemes.Console.Program.Main(new[] { "--no-pause" });
 
             Assert.AreEqual(0, result);
         }

@@ -63,7 +63,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
                     }
                 }
 
-                PauseForExit();
+                PauseForExit(args);
                 return 0;
             }
 
@@ -80,7 +80,7 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
             int result = await RunThemePreviewAsync(requestedThemeName, theme).ConfigureAwait(false);
             if (result == 0)
             {
-                PauseForExit();
+                PauseForExit(args);
             }
 
             return result;
@@ -259,9 +259,9 @@ namespace Eigenverft.NetLib.SerilogThemes.Console
             }
         }
 
-        private static void PauseForExit()
+        private static void PauseForExit(string[] args)
         {
-            if (global::System.Console.IsInputRedirected)
+            if (HasSwitch(args, "--no-pause") || global::System.Console.IsInputRedirected)
             {
                 return;
             }

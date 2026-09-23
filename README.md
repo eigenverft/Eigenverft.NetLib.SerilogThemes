@@ -126,6 +126,7 @@ dotnet publish src/prj/Eigenverft.NetLib.SerilogThemes.Console/Eigenverft.NetLib
 ```
 
 The preview writes every Serilog level, structured scalar and object values, an exception, and a message routed through `Microsoft.Extensions.Logging` for each rendered theme.
+Use `--no-pause` when running the full preview without an interactive keyboard, such as in a test runner.
 
 ## 🎯 Target frameworks
 
