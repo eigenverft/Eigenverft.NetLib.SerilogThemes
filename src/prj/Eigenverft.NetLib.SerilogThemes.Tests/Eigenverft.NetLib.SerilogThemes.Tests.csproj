@@ -75,9 +75,13 @@
 
   <!-- External dependencies -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="4.4.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.4.0" />
+    <!-- Keep .NET 6 testable with the last test-platform line that supports it; current releases require .NET 8+. -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" Condition="'$(TargetFramework)' == 'net6.0'" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.10.4" Condition="'$(TargetFramework)' == 'net6.0'" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.10.4" Condition="'$(TargetFramework)' == 'net6.0'" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" Condition="'$(TargetFramework)' != 'net6.0'" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.4.0" Condition="'$(TargetFramework)' != 'net6.0'" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.4.0" Condition="'$(TargetFramework)' != 'net6.0'" />
     <PackageReference Include="coverlet.msbuild" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

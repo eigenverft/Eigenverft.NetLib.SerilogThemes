@@ -73,9 +73,17 @@
     <GitVersionBaseDirectory>$(MSBuildProjectDirectory)\Properties</GitVersionBaseDirectory>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Eigenverft.NetLib.SerilogThemes\Eigenverft.NetLib.SerilogThemes.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
     <PackageReference Include="Nerdbank.GitVersioning" Version="3.10.94">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Serilog" Version="4.4.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
   </ItemGroup>
 
   <!-- Assembly identity (also NuGet Authors/Company/Copyright/Description when packing). -->

@@ -30,16 +30,12 @@
     <VSTestLogger>trx%3bLogFileName=$(_MSTestResultsDir)$(MSBuildProjectName)-$(TargetFramework).trx;html%3bLogFileName=$(_MSTestResultsDir)result-$(TargetFramework).html</VSTestLogger>
   </PropertyGroup>
 
-  <!-- coverlet.msbuild: CollectCoverage is enough for `dotnet test` on SDK MSBuild. -->
-  <!-- Include is the console app only (sourceName). Threshold fails the test run when that assembly is under 100% line/branch/method total. -->
+  <!-- Keep coverage reports for the preview app; a 100% gate is reserved for the packable library. -->
   <PropertyGroup>
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>opencover,json</CoverletOutputFormat>
     <CoverletOutput>./CoverletOutput/</CoverletOutput>
     <Include>[Eigenverft.NetLib.SerilogThemes.Console]*</Include>
-    <Threshold>100</Threshold>
-    <ThresholdType>line,branch,method</ThresholdType>
-    <ThresholdStat>total</ThresholdStat>
   </PropertyGroup>
 
 

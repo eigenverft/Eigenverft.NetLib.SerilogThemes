@@ -578,8 +578,6 @@ foreach ($SolutionProjectPath in $PublishSolutionPaths) {
     }
 }
 
-exit
-
 # Resolving deployment information for the current branch
 $DeploymentChannel = $BranchDeploymentConfig.Channel.Value
 

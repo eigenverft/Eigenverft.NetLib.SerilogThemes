@@ -147,6 +147,8 @@ dotnet build src/sln/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogTh
 dotnet test src/sln/Eigenverft.NetLib.SerilogThemes/Eigenverft.NetLib.SerilogThemes.slnx --configuration Release
 ```
 
+CI builds the library and runs its tests on all package targets (`net462`, `net6.0`, `net8.0`, and `net10.0`). The `net6.0` tests use the older test SDK and MSTest versions that support that runtime; the other targets use the current test packages.
+
 ## 🚢 Releases
 
 `main` is the production channel. Every accepted change is built, tested, documented, packed, and published by the repository CI/CD workflow.
